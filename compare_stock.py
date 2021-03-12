@@ -134,7 +134,7 @@ def add_div_growth_rate(output):
 
     for i in range(1, len(output)):
         new_price = output.loc[i, "Div Yield"]
-        output.loc[i, "Div Growth Rate"] = (new_price - prev_price) / prev_price
+        output.loc[i, "Div Growth Rate"] = (new_price - prev_price) - 1
         prev_price = new_price
 
 def create_out_df(stock, stock_name):
