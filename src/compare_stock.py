@@ -1,3 +1,4 @@
+import copy
 import pandas as pd
 import numpy as np
 import os
@@ -115,36 +116,44 @@ def add_change_in_price(output):
         output.loc[i, "Change in Price"] = (new_price-prev_price)/prev_price
         prev_price = new_price
 
-def add_annual_div_yield(output, stock):
-
+def get_div_lst(stock):
     # create list of stock divs
     div_lst = []
-    for i in range(len(stock)-1, -1, -1):
+    for i in range(len(stock) - 1, -1, -1):
         tmp = stock.loc[i, "Div"]
         if not np.isnan(tmp):
             div_lst.append(tmp)
-    div_lst = pd.unique(div_lst).tolist()
+    return pd.unique(div_lst).tolist()
+
+def add_annual_div_yield(output, div_lst):
+    lst_cpy = copy.deepcopy(div_lst)
 
     for i in range(len(output)-1, 0, -1):
-        output.loc[i, "Div Yield"] = (div_lst.pop(0)*4)/output.loc[i, "Avg Price"]
+        output.loc[i, "Div Yield"] = (lst_cpy.pop(0)*4)/output.loc[i, "Avg Price"]
 
-def add_div_growth_rate(output):
-    prev_price = output.loc[0, "Div Yield"]
+def Reverse(lst):
+    return [ele for ele in reversed(lst)]
 
-    for i in range(1, len(output)):
-        new_price = output.loc[i, "Div Yield"]
-        output.loc[i, "Div Growth Rate"] = (new_price - prev_price) - 1
-        prev_price = new_price
+def add_div_growth_rate(output, div_lst):
+    div_lst = Reverse(div_lst)
+
+    prev_div = div_lst[0]
+    for i in range(1, len(output)-1):
+        new_div = div_lst[i]
+        output.loc[i+1, "Div Growth Rate"] = (new_div / prev_div) - 1
+        prev_div = new_div
+
 
 def create_out_df(stock, stock_name):
     cols = ['Year', 'Avg Price', 'Change in Price', 'Div Yield', 'Div Growth Rate']
+    div_lst = get_div_lst(stock)
 
     output = pd.DataFrame(columns=cols)
     output = add_years(stock, stock_name, output, cols)
     add_avg_price(stock, output)
     add_change_in_price(output)
-    add_annual_div_yield(output, stock)
-    add_div_growth_rate(output)
+    add_annual_div_yield(output, div_lst)
+    add_div_growth_rate(output, div_lst)
 
     output = output.drop(output.index[0]).reset_index(drop=True)
 
@@ -173,6 +182,7 @@ if __name__ == "__main__":
 
     stock_names = ["APPL", "IBM", "KO", "NHI", "T"]
 
-    #create_tables(stock_names)
+    create_tables(stock_names)
 
-    print_table("APPL")
+    #for name in stock_names:
+    #print_table("T")
