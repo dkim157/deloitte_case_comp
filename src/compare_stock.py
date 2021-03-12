@@ -106,8 +106,6 @@ def add_avg_price(stock, output):
             month_ctr = 0
             avg = 0
 
-
-
 def add_change_in_price(output):
     prev_price = output.loc[0, "Avg Price"]
 
@@ -151,23 +149,29 @@ def create_out_df(stock, stock_name):
 
     return output
 
-def print_values(name):
+def print_table(name):
     stock = create_stock_df(name)
     out = create_out_df(stock, name)
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):
         print(stock)
         print(out)
 
+def create_table(name):
+    # create dataframes
+    stock = create_stock_df(name)
+    out = create_out_df(stock, name)
+    # create .csv files
+    stock.to_csv(r'../output/' + name + '_full.csv', index=False)
+    out.to_csv(r'../output/' + name + '_summary.csv', index=False)
+
+def create_tables(names):
+    for name in names:
+        create_table(name)
+
 if __name__ == "__main__":
 
     stock_names = ["APPL", "IBM", "KO", "NHI", "T"]
 
-    for name in stock_names:
-        # create dataframes
-        stock = create_stock_df(name)
-        out = create_out_df(stock, name)
-        # create .csv files
-        stock.to_csv(r'./output/' + name + '_full.csv', index=False)
-        out.to_csv(r'./output/' + name + '_summary.csv', index=False)
+    create_tables(stock_names)
 
-    # print_values("APPL")
+    #print_table("APPL")
