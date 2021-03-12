@@ -173,10 +173,16 @@ def create_table(name):
     # create .csv files
     stock.to_csv(r'./output/' + name + '_full.csv', index=False)
     out.to_csv(r'./output/' + name + '_summary.csv', index=False)
+    return out
 
 def create_tables(names):
+    cols = ['Year', 'Avg Price', 'Change in Price', 'Div Yield', 'Div Growth Rate']
+    sum_all = pd.DataFrame(columns=cols)
+
     for name in names:
-        create_table(name)
+        sum_all = sum_all.append(create_table(name), ignore_index=True)
+
+    sum_all.to_csv(r'./output/ALL_ANNUAL.csv', index=False)
 
 if __name__ == "__main__":
 
