@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import os
 
 def get_avg(stock):
     avg_df = []
@@ -33,8 +34,8 @@ def combine_by_date(stock, div):
 
 def create_stock_df(stock_name):
     # create base tables
-    stock = open_stock_df("./" + stock_name + "_stock.csv")
-    div = pd.read_csv("./" + stock_name + "_div.csv")
+    stock = open_stock_df("./input/" + stock_name + "_stock.csv")
+    div = pd.read_csv("./input/" + stock_name + "_div.csv")
 
     # sort (and reformat) dates
     stock = stock.sort_values("Date")
@@ -161,8 +162,8 @@ def create_table(name):
     stock = create_stock_df(name)
     out = create_out_df(stock, name)
     # create .csv files
-    stock.to_csv(r'../output/' + name + '_full.csv', index=False)
-    out.to_csv(r'../output/' + name + '_summary.csv', index=False)
+    stock.to_csv(r'./output/' + name + '_full.csv', index=False)
+    out.to_csv(r'./output/' + name + '_summary.csv', index=False)
 
 def create_tables(names):
     for name in names:
@@ -172,6 +173,6 @@ if __name__ == "__main__":
 
     stock_names = ["APPL", "IBM", "KO", "NHI", "T"]
 
-    create_tables(stock_names)
+    #create_tables(stock_names)
 
-    #print_table("APPL")
+    print_table("APPL")
